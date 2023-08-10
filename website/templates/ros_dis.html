@@ -1,0 +1,145 @@
+<!-- rosui/templates/rosui/run_dis.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Run Dis Button</title>
+    <!-- Add the following line to include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Automated Regression Testing!!</h1>
+        <h2>Disinfection:</h2>
+        <form action="{% url 'run_disinfect' %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="rosMasterUriInput" class="form-label">Enter ROS Master IP:</label>
+                        <input type="text" class="form-control" id="rosMasterUriInput" name="ros_master_uri" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="numRunsInput" class="form-label">Enter the number of runs:</label>
+                        <input type="number" class="form-control" id="numRunsInput" name="num_runs" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="RoomnumInput" class="form-label">Enter Room Number:</label>
+                        <input type="number" class="form-control" id="RoomnumInput" name="room_number" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="RoomsetupInput" class="form-label">Enter Room setup Number:</label>
+                        <input type="number" class="form-control" id="RoomsetupInput" name="room_setup" required>
+                    </div>
+                </div>
+            <!-- Use Bootstrap classes for styling the button -->
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary" id="runDisButton">Run Disinfection</button>
+                </div>
+            </div>
+        </form>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+        <div class="container mt-4">
+            <h2>System Health testing:</h2>
+        </div>
+        <!-- Add a section to display the room number entered by the user -->
+        {% if room_number_entered %}
+        <div class="col-md-12 mt-3">
+            <p>Room Number Entered: {{ room_number_entered }}</p>
+        </div>
+        {% endif %}
+
+        <div class="container mt-4">
+            <h2>Reports :</h2>
+        </div>
+
+        <!-- Display the disinfection runs log in a table format -->
+        {% if runs %}
+        <div class="container mt-4">
+            <h2>Disinfection Runs Log</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Room Number</th>
+                        <th scope="col">Room Setup Number</th>
+                        <th scope="col">Run Count</th>
+                        <th scope="col">Master IP</th>
+                        <th scope="col">Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for run in runs %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ run.room_number }}</td>
+                        <td>{{ run.room_setup }}</td>
+                        <td>{{ run.run_count }}</td>
+                        <td>{{ run.master_ip }}</td>
+                        <td>{{ run.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    <div id="outputDiv" class="mt-4" style="display: none;"></div>
+    <!-- Add Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-7oSFIQFp7YB7A2io9InAq9ifRJxF+2Rf8o/bbc3Qm9ZG26QGTrnEhZ93B1Y0A8Q" crossorigin="anonymous"></script>
+    <!-- Add the following script to handle the button click event and form submission -->
+    <script>
+        document.getElementById("runDisButton").addEventListener("click", function(event) {
+            event.preventDefault();
+            var outputDiv = document.getElementById("outputDiv");
+            var rosMasterIpInput = document.getElementById("rosMasterUriInput").value;
+            var numRunsInput = document.getElementById("numRunsInput").value;
+            var RoomnumInput = document.getElementById("RoomnumInput").value;
+            var RoomsetupInput = document.getElementById("RoomsetupInput").value;
+            var runDisButton = document.getElementById("runDisButton");
+
+            // Disable the button during execution
+            runDisButton.disabled = true;
+
+            // Add "http://" and ":11311" to the IP address
+            var rosMasterUri = "http://" + rosMasterIpInput + ":11311";
+
+            // Make the AJAX request to submit the form
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", this.form.action, true);
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Display the output text
+                    outputDiv.innerHTML = "Script executed successfully! Output: " + xhr.responseText;
+                    outputDiv.style.display = "block";
+                } else {
+                    // Error handling
+                    outputDiv.innerHTML = "Error occurred.";
+                    outputDiv.style.display = "block";
+                }
+                // Enable the button after response
+                runDisButton.disabled = false;
+            };
+            xhr.onerror = function() {
+                outputDiv.innerHTML = "Error occurred.";
+                outputDiv.style.display = "block";
+                // Enable the button on error
+                runDisButton.disabled = false;
+            };
+            xhr.send("ros_master_uri=" + encodeURIComponent(rosMasterUri) + "&num_runs=" + encodeURIComponent(numRunsInput) + "&room_number" + encodeURIComponent(RoomnumInput) + "&room_setup" + encodeURIComponent(RoomsetupInput));
+        });
+    </script>
+</body>
+</html>

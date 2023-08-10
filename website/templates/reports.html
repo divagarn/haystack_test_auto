@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container mt-4">
+    <h2>Disinfection Runs Log</h2>
+    
+    <!-- Filter form for IP address and date -->
+    <form method="get" action="{% url 'reports' %}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="ipFilterInput" class="form-label">Filter by IP Address:</label>
+                    <input type="text" class="form-control" id="ipFilterInput" name="ip_filter" placeholder="Enter IP address">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="dateFilterInput" class="form-label">Filter by Date:</label>
+                    <input type="date" class="form-control" id="dateFilterInput" name="date_filter">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table mt-3 table-bordered"">
+      <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Room Number</th>
+            <th scope="col">Room Setup Number</th>
+            <th scope="col">Run Count</th>
+            <th scope="col">Master IP</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Disinfection Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for run in runs %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ run.room_number }}</td>
+            <td>{{ run.room_setup }}</td>
+            <td>{{ run.run_count }}</td>
+            <td>{{ run.master_ip }}</td>
+            <td>{{ run.created_at }}</td>
+            <td>{{ run.disinfect_status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    <div class="pagination justify-content-center">
+        <ul class="pagination">
+            {% if runs.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ runs.previous_page_number }}">Previous</a></li>
+            {% endif %}
+    
+            <li class="page-item disabled"><span class="page-link">Page {{ runs.number }} of {{ runs.paginator.num_pages }}</span></li>
+    
+            {% if runs.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ runs.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ runs.paginator.num_pages }}">Last &raquo;</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <form method="get" action="{% url 'export_reports' %}">
+        <input type="hidden" name="ip_filter" value="{{ request.GET.ip_filter }}">
+        <input type="hidden" name="date_filter" value="{{ request.GET.date_filter }}">
+        <button type="submit" class="btn btn-primary">Export to Excel</button>
+    </form>
+</div>
+
+{% else %}
+<div>
+<section class="vh-100">
+    <br/><br/><br/><br/>
+    <div class="container mt-5">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-10">
+          <div class="card" style="border-radius: 1rem;">
+            <div class="row g-0">
+              <div class="col-md-6 col-lg-5 d-none d-md-block">
+                  <br/><br/><br/><br/><br/><br/><br/><br/>
+  
+                <img src="data:image/png;base64,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"
+                  alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+              </div>
+              <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                <div class="card-body p-4 p-lg-5 text-black">
+  
+                  <form method="POST" action="{% url 'home' %}">
+               {% csrf_token %}
+               <form>
+  
+                    <div class="d-flex align-items-center mb-3 pb-1">
+                      <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
+                      <span class="h1 fw-bold mb-0">Log In</span>
+                    </div>
+  
+                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
+  
+                    <div class="form-outline mb-4">
+                      <input type="text" class="form-control form-control-lg" name="username", placeholder="Username", required>
+  
+                    </div>
+  
+                    <div class="form-outline mb-4">
+                      <input type="password" class="form-control form-control-lg", name="password", placeholder="Password",required>
+  
+                    </div>
+  
+                    <div class="pt-1 mb-4">
+                      <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                    </div>
+  
+              </form>
+                  </form>
+  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+</div>
+
+</div>
+{% endif %}
+{% endblock %}
