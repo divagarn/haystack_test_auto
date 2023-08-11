@@ -71,7 +71,6 @@
                                 <th scope="col">Run Count</th>
                                 <th scope="col">Master IP</th>
                                 <th scope="col">Created At</th>
-                                <th scope="col">Disinfection Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,7 +82,6 @@
                                 <td>{{ run.run_count }}</td>
                                 <td>{{ run.master_ip }}</td>
                                 <td>{{ run.created_at }}</td>
-                                <td>{{ run.disinfect_status }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -108,7 +106,6 @@
               </div>
           </div>
       </form>
-      
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
       <script>

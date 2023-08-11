@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Page</title>
+    <!-- Include Bootstrap CSS via CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Pre-filled Data</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>YEAR</th>
+                        <th>MONTH</th>
+                        <th>DAY</th>
+                        <th>HOUR</th>
+                        <th>MIN</th>
+                        <th>ROOM</th>
+                        <th>PERCENTAGE</th>
+                        <th>DURATION</th>
+                        <th>IMAGE</th>
+                        <th>DATE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in prefilled_data %}
+                    <tr>
+                        <td>{{ item.ID }}</td>
+                        <td>{{ item.YEAR }}</td>
+                        <td>{{ item.MONTH }}</td>
+                        <td>{{ item.DAY }}</td>
+                        <td>{{ item.HOUR }}</td>
+                        <td>{{ item.MIN }}</td>
+                        <td>{{ item.ROOM }}</td>
+                        <td>{{ item.PERCENTAGE }}</td>
+                        <td>{{ item.DURATION }}</td>
+                        <td>{{ item.IMAGE }}</td>
+                        <td>{{ item.DATE }}</td>
+                        <td>{{ item.STATUS }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

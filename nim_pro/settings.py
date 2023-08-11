@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-fm*_ptk4s+79b95a(13qblax@i1g%*1ho&$8+ut_89v9-4y9$n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['172.16.2.66']
+ALLOWED_HOSTS = [ ]
 
 
 # Application definition
@@ -74,18 +74,18 @@ WSGI_APPLICATION = 'nim_pro.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'haystac',
-        'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT':'',
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'prefilled_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'disinfect_status_report.db',
+    },
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

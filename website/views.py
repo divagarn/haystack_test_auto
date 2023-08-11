@@ -5,14 +5,17 @@ from django.contrib import messages
 from openpyxl import Workbook
 from django.core.paginator import Paginator
 from django.utils import timezone
-import subprocess, os, rospy, threading
-from .models import DisinfectionRun
+import subprocess, os, threading
+from .models import DisinfectionRun, PrefilledData
 from django.db.models import Q
 from datetime import datetime, timedelta
 from .utils import check_device_availability
-from threading import Lock, Event
 
-from .param_monitor import monitor_param_changes
+
+def new_page_view(request):
+    prefilled_data = PrefilledData.objects.using('prefilled_db').all()
+    context = {'prefilled_data': prefilled_data}
+    return render(request, 'new_page_template.html', context)
 
 
 def check_sensor_status(request):
@@ -34,29 +37,17 @@ def check_sensor_status(request):
 
 def change_mode_to_disinfect():
     # rospy.set_param('/disinfect_room_number', int(12))
-    rospy.set_param('/haystack/mode', 'DISINFECT')
+    # rospy.set_param('/haystack/mode', 'DISINFECT')
+    pass
 
 def change_mode_to_idle():
-    rospy.set_param('/haystack/mode', 'IDLE')
+    # rospy.set_param('/haystack/mode', 'IDLE')
+    pass
 
 def run_ros_node():
-    rospy.init_node('disinfection_node', anonymous=True)
-    rospy.spin()
-
-# Create a global variable to store the current disinfect status
-current_disinfect_status = ""
-# status_lock = Lock() 
-# status_event = Event()
-
-# def update_disinfect_status(value):
-#     global current_disinfect_status
-#     with status_lock:
-#         current_disinfect_status = value
-#         status_event.set()
-# Define a callback function to update the global variable
-def update_disinfect_status(value):
-    global current_disinfect_status
-    current_disinfect_status = value
+    # rospy.init_node('disinfection_node', anonymous=True)
+    # rospy.spin()
+    pass
 
 def run_dis(request):
 
@@ -79,46 +70,35 @@ def run_dis(request):
             if num_runs <= 0:
                 return HttpResponse("Error: Invalid number of runs.")
             
-            run = 0
-            while run < num_runs:
-                mode = rospy.get_param('/haystack/mode', default='IDLE')
-                if mode == 'IDLE':
-                    rospy.loginfo("Mode is IDLE. Waiting for 10 seconds...")
-                    rospy.sleep(duration=10.0)
-                    rospy.set_param('/disinfect_room_number', input_number)
-                    change_mode_to_disinfect()
-                    rospy.loginfo("Mode changed to DISINFECT.")
+            # run = 0
+            # while run < num_runs:
+            #     mode = rospy.get_param('/haystack/mode', default='IDLE')
+            #     if mode == 'IDLE':
+            #         rospy.loginfo("Mode is IDLE. Waiting for 10 seconds...")
+            #         rospy.sleep(duration=10.0)
+            #         rospy.set_param('/disinfect_room_number', input_number)
+            #         change_mode_to_disinfect()
+            #         rospy.loginfo("Mode changed to DISINFECT.")
 
-                    # run_status = rospy.get_param('/coverage/state', "")
-                    # disinfect_status = rospy.get_param('/disinfect_status', "")
+            #         # Save the data to the database for each run
+            #         disinfection_run = DisinfectionRun(
+            #             room_number=input_number,
+            #             room_setup=room_setup_number,
+            #             run_count=run + 1,
+            #             master_ip=request.POST.get('ros_master_uri', ''),
+            #         )
+            #         disinfection_run.save()
 
-                    # rospy.sleep(duration=2.0)
-                    # with status_lock:
-                    #     status_event.wait()  # Wait for the event to be set
-                    #     disinfect_status = current_disinfect_status
-                    #     status_event.clear()
+            #         run += 1
+            #         input_number += 1  # Increment input_number by 1 for each run
 
-
-                    # Save the data to the database for each run
-                    disinfection_run = DisinfectionRun(
-                        room_number=input_number ,
-                        room_setup=room_setup_number,
-                        run_count=run+1 ,
-                        master_ip=request.POST.get('ros_master_uri', ''),
-                        disinfect_status=current_disinfect_status,
-                    )
-                    disinfection_run.save()
-
-                    run += 1
-                    input_number += 1  
-                
-                else:
-                    rospy.loginfo("Mode is not IDLE. Waiting for 5 seconds...")
-                    rospy.sleep(duration=3.0)
+            #     else:
+            #         rospy.loginfo("Mode is not IDLE. Waiting for 5 seconds...")
+            #         rospy.sleep(duration=5.0)
             
 
-            # change_mode_to_idle()
-            rospy.loginfo("All runs completed. Mode changed back to IDLE.")
+            # # change_mode_to_idle()
+            # rospy.loginfo("All runs completed. Mode changed back to IDLE.")
 
             return HttpResponse("Runs started successfully.")
 

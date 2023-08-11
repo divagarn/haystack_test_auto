@@ -27,30 +27,28 @@
     </form>
 
     <table class="table mt-3 table-bordered"">
-      <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Room Number</th>
-            <th scope="col">Room Setup Number</th>
-            <th scope="col">Run Count</th>
-            <th scope="col">Master IP</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Disinfection Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for run in runs %}
-        <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ run.room_number }}</td>
-            <td>{{ run.room_setup }}</td>
-            <td>{{ run.run_count }}</td>
-            <td>{{ run.master_ip }}</td>
-            <td>{{ run.created_at }}</td>
-            <td>{{ run.disinfect_status }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Room Number</th>
+                <th scope="col">Room Setup Number</th>
+                <th scope="col">Run Count</th>
+                <th scope="col">Master IP</th>
+                <th scope="col">Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in runs %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ run.room_number }}</td>
+                <td>{{ run.room_setup }}</td>
+                <td>{{ run.run_count }}</td>
+                <td>{{ run.master_ip }}</td>
+                <td>{{ run.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <div class="pagination justify-content-center">
         <ul class="pagination">
