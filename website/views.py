@@ -15,7 +15,7 @@ from .utils import check_device_availability
 def new_page_view(request):
     prefilled_data = PrefilledData.objects.using('prefilled_db').all()
     context = {'prefilled_data': prefilled_data}
-    return render(request, 'new_page_template.html', context)
+    return render(request, 'robot_report.html', context)
 
 
 def check_sensor_status(request):

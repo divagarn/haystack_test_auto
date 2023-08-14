@@ -10,7 +10,7 @@ urlpatterns = [
     path('reports/', views.reports, name='reports'),
     path('export-reports/', views.export_reports, name='export_reports'),
     path('check_sensor_status/', views.check_sensor_status, name='check_sensor_status'),
-    path('new_page/', views.new_page_view, name='new_page'),
+    path('robot_report/', views.new_page_view, name='robot_report'),
 ]
 
 

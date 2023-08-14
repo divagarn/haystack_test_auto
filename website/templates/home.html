@@ -57,6 +57,10 @@
                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#reportsTable" aria-expanded="false" aria-controls="collapseExample">
                         Reports
                     </button>
+
+
+                    
+                    
                 </p>
                 <div class="collapse" id="reportsTable">
                     <h3>Disinfection Runs Log</h3>
@@ -103,6 +107,7 @@
                     </div>
                     
                 </div>
+
               </div>
           </div>
       </form>
@@ -191,6 +196,83 @@
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">Logout</button>
       </form> -->
+
+      <div class="container mt-4">
+        <button id="hideButton" class="btn btn-primary">Hide Content</button>
+        <div id="contentToHide">
+          <!-- Your existing page content goes here -->
+          <h1>Welcome to My Page</h1>
+          <body>
+            <div class="container mt-4">
+                <h1 class="mb-4">Actual Robot Report</h1>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>YEAR</th>
+                                <th>MONTH</th>
+                                <th>DAY</th>
+                                <th>HOUR</th>
+                                <th>MIN</th>
+                                <th>ROOM</th>
+                                <th>PERCENTAGE</th>
+                                <th>DURATION</th>
+                                <th>IMAGE</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in prefilled_data %}
+                            <tr>
+                                <td>{{ item.ID }}</td>
+                                <td>{{ item.YEAR }}</td>
+                                <td>{{ item.MONTH }}</td>
+                                <td>{{ item.DAY }}</td>
+                                <td>{{ item.HOUR }}</td>
+                                <td>{{ item.MIN }}</td>
+                                <td>{{ item.ROOM }}</td>
+                                <td>{{ item.PERCENTAGE }}</td>
+                                <td>{{ item.DURATION }}</td>
+                                <td>{{ item.IMAGE }}</td>
+                                <td>{{ item.DATE }}</td>
+                                <td>{{ item.STATUS }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </body>
+          <p>This is some sample content that you want to hide.</p>
+        </div>
+      </div>
+
+
+
+      <script>
+        // JavaScript to hide/show the content when the button is clicked
+        const hideButton = document.getElementById('hideButton');
+        const contentToHide = document.getElementById('contentToHide');
+      
+        hideButton.addEventListener('click', () => {
+          if (contentToHide.style.display === 'none') {
+            contentToHide.style.display = 'block';
+            hideButton.textContent = 'Hide Content';
+          } else {
+            contentToHide.style.display = 'none';
+            hideButton.textContent = 'Show Content';
+          }
+        });
+      </script>
+
+
+
+
+
+      
       <div class="container mt-4">
           <h2>System Health check:</h2>
 
