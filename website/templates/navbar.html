@@ -9,13 +9,16 @@
           
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'reports' %}">Reports</a>
-          </li>
-          
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'robot_report' %}">Robot Report</a>
+            <a class="nav-link" href="{% url 'reports' %}">Admin Reports</a>
           </li>
 
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'display_database' %}">Robots Full Reports</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'display_filtered_data' %}">History Run</a>
+          </li>
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>

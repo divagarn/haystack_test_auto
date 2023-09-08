@@ -10,7 +10,11 @@ urlpatterns = [
     path('reports/', views.reports, name='reports'),
     path('export-reports/', views.export_reports, name='export_reports'),
     path('check_sensor_status/', views.check_sensor_status, name='check_sensor_status'),
-    path('robot_report/', views.new_page_view, name='robot_report'),
+    # path('display-database/', views.display_database, name='display_database'),
+    path('display-database/', views.new_model_template, name='display_database'),
+    path('filtered-data/', views.display_filtered_data, name='display_filtered_data'),
+    # path('robot_report/', views.new_page_view, name='robot_report'),
+    # path('robot_report/', views.new_page_view_home, name='robot_report'),
 ]
 
 

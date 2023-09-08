@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container mt-5">
+    <h2>Robot DataBase</h2>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Day</th>
+                <th>Hour</th>
+                <th>Minute</th>
+                <th>Room</th>
+                <th>Percentage</th>
+                <th>Duration</th>
+                <th>Image</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>IP Address</th> 
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in filtered_data %}
+            <tr>
+                <td>{{ data.id }}</td>
+                <td>{{ data.year }}</td>
+                <td>{{ data.month }}</td>
+                <td>{{ data.day }}</td>
+                <td>{{ data.hour }}</td>
+                <td>{{ data.min }}</td>
+                <td>{{ data.room }}</td>
+                <td>{{ data.percentage }}</td>
+                <td>{{ data.duration }}</td>
+                <td>{{ data.image }}</td>
+                <td>{{ data.date }}</td>
+                <td>{{ data.status }}</td>
+                <td>{{ data.ip_address }}</td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="container mt-5">
+    <section class="vh-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-xl-10">
+                <div class="card" style="border-radius: 1rem;">
+                    <div class="row g-0">
+                        <div class="col-md-6 col-lg-5 d-none d-md-block">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhsAAABdCAMAAAA7Z1TXAAAAzFBMVEX///8/ODRThqOdnJ6Z1vn6+vo8NTE1LSg3MCs6My42LimDgH49NjFJQz/s6+tGPzswJyK/vbxqZmPV1NMqIBnk4+OnpaTEwsGKhoTJyMeXlJNxbWuQjYtUTksxKCN9eXdQe5RJSUk6Liac2v5hXFnc29tQSkZJQj7q6em3tbSvrKtcV1Sdmpi4trTPzs0mGxROdYuHt9N2ma5ZaHJRWV9ETVM5KR1KZXVLaHpGWGN5oLdujaCSy+tfcn6BrshHWmVlf442IQ8WAQBLTk8/q1hcAAAUe0lEQVR4nO1da4ObNrM2cZCQLAMG37llNzb2+rZJ2jS9pE3f0///nw4aCSFhbG+2Tjbd5emHZi2QNNLDzGg0iE6nRYsWLVq0aNHih8Fhs3zqLrT4IeFOmd8f20/djRY/HNwdpsxCqTdo2dHCwH6RWgCEo/CpO9PiB8JskRKrhJP2WrejhcA6phUzOHDeuh0tCrhjn0pOoOI/aVhat6NFZ7LFJTNSy7OwZAfDUWtYXjbCrXI0cLLfJ+Hcc0q3A2frp+5eiyeDO7VKZtDhfN3Z56POMhqq3/LdU/ewxdPA3SEqLQhxeqPiF86NYtESYOV25K3b8RKxX/glBfztRPwE3OjYY6TY4WdttOOl4RDg0nSk27H8UXKjYEfslWsXJ52OnqyXLb4/1jFRLmcaK5dTcaNwUgNfOamrTWtYXgrcnWIGQZGmFTRu8FgpraIdk5YdLwKDReVN5DN90gc6NzruJlUX0jba8QIQBipAjnPTWLhTp/bD3FKmh/TaaMfzxjpGaraHc9PJ3CfYqi9LDlW0A+fjTotnC3dsVRGNzLQSYYIRspBDa9HQwSJVYfSkjXY8V0yqaU6TgVE0mqYEkZXnEUZX5iasO2al20HSNtrxLLFc0CoYXpv+OaOI5dNsFUceQnhlLkvcXrXJ4kzd79vtFt8eYRXRGNaiWZttygiL5t3Mi7vxwmFH0dAwqNyOpLUrzw1jmfNHSG05elhgwqxg3u0CN7rdacKQQ0z+2JNt6ancnwqT2oCvL7sCrlL9AyqxT+C6rTz0Vjvch1cZ07FI00CLmqMRDwsXYzvtdhU3+P8Jw1ZtPTteCXIMT3DDjXscjQ7JEop634wcm6yo/V/6QqL/8bk+2rteM6Td2j4F0ZZVorZ4zauK4hFI5bdXqes+7lYsT8+USf8+Z2YYR5VgAAAAASUVORK5CYII=" class="img-fluid"
+                                alt="Sample project">
+                        </div>
+                        <div class="col-md-6 col-lg-7">
+                            <div class="card-body p-4 p-lg-5 text-black">
+                                <h5 class="mb-2">Welcome to Your Dashboard</h5>
+                                <h3 class="fw-bold">Please log in to access your data.</h3>
+                                <form method="POST" action="{% url 'login' %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Log In</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endif %}
+{% endblock %}

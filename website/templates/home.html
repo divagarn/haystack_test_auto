@@ -9,8 +9,13 @@
 
 <head>
   <title>Run Dis Button</title>
+  
   <!-- Add the following line to include Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
   <div class="container mt-4">
@@ -22,13 +27,13 @@
               <div class="col-md-6">
                   <div class="mb-3">
                       <label for="rosMasterUriInput" class="form-label">Enter ROS Master IP:</label>
-                      <input type="text" class="form-control" id="rosMasterUriInput" name="ros_master_uri" required>
+                      <input type="text" class="form-control" id="rosMasterUriInput" value="172.16.2.167" name="ros_master_uri" required>
                   </div>
               </div>
               <div class="col-md-6">
                   <div class="mb-3">
                       <label for="numRunsInput" class="form-label">Enter the number of runs:</label>
-                      <input type="number" class="form-control" id="numRunsInput" name="num_runs" required>
+                      <input type="number" class="form-control" id="numRunsInput" value="1" name="num_runs" required>
                   </div>
               </div>
               <div class="col-md-6">
@@ -40,13 +45,13 @@
                 <!-- </form>  -->
                   <div class="mb-3">
                       <label for="RoomnumInput" class="form-label">Enter Room Number:</label>
-                      <input type="number" class="form-control" id="RoomnumInput" name="number" required>
+                      <input type="number" class="form-control" id="RoomnumInput" value="1" name="number" required>
                   </div>
               </div>
               <div class="col-md-6">
                   <div class="mb-3">
                       <label for="RoomsetupInput" class="form-label">Enter Room setup Number:</label>
-                      <input type="number" class="form-control" id="RoomsetupInput" name="room_setup" required>
+                      <input type="number" class="form-control" id="RoomsetupInput"  value="1" name="room_setup" required>
                   </div>
               </div>
           <!-- Use Bootstrap classes for styling the button -->
@@ -55,53 +60,116 @@
                   <button type="submit" class="btn btn-primary" id="runDisButton" style="margin-right:16px">Run Disinfection</button>
                 <p class="d-inline-flex gap-1"></p>
                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#reportsTable" aria-expanded="false" aria-controls="collapseExample">
-                        Reports
+                        Previous Reports
                     </button>
+                    <!-- <button id="collapseButton" class="btn btn-primary" disabled>Toggle Text</button> -->
 
-
+                    <button class="btn btn-primary" id="collapseButton" disabled>Show reports</button>
+                    
                     
                     
                 </p>
-                <div class="collapse" id="reportsTable">
-                    <h3>Disinfection Runs Log</h3>
-                    <p>Total Remaining Reports: {{ remaining_reports }}</p>
-                    
-                    <table class="table mt-3">
-                        <thead>
+
+                <!-- <p id="helloText" style="display: none;">Hello</p> -->
+                <div id="contentToDisplay" style="display: none;">
+                    <p>Hello Text</p>
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Room Number</th>
-                                <th scope="col">Room Setup Number</th>
-                                <th scope="col">Run Count</th>
-                                <th scope="col">Master IP</th>
-                                <th scope="col">Created At</th>
+                                <th>ID</th>
+                                <th>Year</th>
+                                <th>Month</th>
+                                <th>Day</th>
+                                <th>Hour</th>
+                                <th>Minute</th>
+                                <th>Room</th>
+                                <th>Percentage</th>
+                                <th>Duration</th>
+                                <th>Image</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>IP Address</th> 
                             </tr>
                         </thead>
                         <tbody>
-                            {% for run in runs %}
+                            {% for data in filtered_data %}
                             <tr>
-                                <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ run.room_number }}</td>
-                                <td>{{ run.room_setup }}</td>
-                                <td>{{ run.run_count }}</td>
-                                <td>{{ run.master_ip }}</td>
-                                <td>{{ run.created_at }}</td>
+                                <td>{{ data.id }}</td>
+                                <td>{{ data.year }}</td>
+                                <td>{{ data.month }}</td>
+                                <td>{{ data.day }}</td>
+                                <td>{{ data.hour }}</td>
+                                <td>{{ data.min }}</td>
+                                <td>{{ data.room }}</td>
+                                <td>{{ data.percentage }}</td>
+                                <td>{{ data.duration }}</td>
+                                <td>{{ data.image }}</td>
+                                <td>{{ data.date }}</td>
+                                <td>{{ data.status }}</td>
+                                <td>{{ data.ip_address }}</td> 
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                <!-- actual own report -->
+                <div class="collapse" id="reportsTable">
+                    <h3>Disinfection Runs Log</h3>
+
+
+                    <!-- <p>Total Remaining Reports: {{ remaining_reports }}</p> -->
+
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Year</th>
+                                <th>Month</th>
+                                <th>Day</th>
+                                <th>Hour</th>
+                                <th>Minute</th>
+                                <th>Room</th>
+                                <th>Percentage</th>
+                                <th>Duration</th>
+                                <th>Image</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in filtered_data %}
+                                <tr>
+                                    <td>{{ data.id }}</td>
+                                    <td>{{ data.year }}</td>
+                                    <td>{{ data.month }}</td>
+                                    <td>{{ data.day }}</td>
+                                    <td>{{ data.hour }}</td>
+                                    <td>{{ data.min }}</td>
+                                    <td>{{ data.room }}</td>
+                                    <td>{{ data.percentage }}</td>
+                                    <td>{{ data.duration }}</td>
+                                    <td>{{ data.image }}</td>
+                                    <td>{{ data.date }}</td>
+                                    <td>{{ data.status }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    
+                    
                     <div class="pagination justify-content-center">
                         <ul class="pagination">
-                            {% if runs.has_previous %}
+                            {% if filtered_data.has_previous %}
                                 <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
-                                <li class="page-item"><a class="page-link" href="?page={{ runs.previous_page_number }}">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ filtered_data.previous_page_number }}">Previous</a></li>
                             {% endif %}
                     
-                            <li class="page-item disabled"><span class="page-link">Page {{ runs.number }} of {{ runs.paginator.num_pages }}</span></li>
+                            <li class="page-item disabled"><span class="page-link">Page {{ filtered_data.number }} of {{ filtered_data.paginator.num_pages }}</span></li>
                     
-                            {% if runs.has_next %}
-                                <li class="page-item"><a class="page-link" href="?page={{ runs.next_page_number }}">Next</a></li>
-                                <li class="page-item"><a class="page-link" href="?page={{ runs.paginator.num_pages }}">Last &raquo;</a></li>
+                            {% if filtered_data.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ filtered_data.next_page_number }}">Next</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ filtered_data.paginator.num_pages }}">Last &raquo;</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -111,6 +179,53 @@
               </div>
           </div>
       </form>
+
+
+
+      <script>
+        $(document).ready(function () {
+            // Click event for the collapsible button
+            $("#collapseButton").click(function () {
+                // Toggle the content's visibility
+                $("#contentToDisplay").toggle();
+
+                // Change the button text and behavior
+                if ($("#contentToDisplay").is(":visible")) {
+                    $(this).html("Hide");
+                } else {
+                    $(this).html("Show reports");
+                }
+            });
+        });
+    </script>
+
+
+      <script>
+        // JavaScript code to handle the collapsible button
+        const rosMasterUriInput = document.getElementById('rosMasterUriInput');
+        const collapseButton = document.getElementById('collapseButton');
+        const helloText = document.getElementById('helloText');
+
+        rosMasterUriInput.addEventListener('input', function () {
+            // Check if the input field is not empty
+            if (rosMasterUriInput.value.trim() !== '') {
+                collapseButton.removeAttribute('disabled'); // Enable the button
+            } else {
+                collapseButton.setAttribute('disabled', 'disabled'); // Disable the button
+            }
+        });
+
+        collapseButton.addEventListener('click', function () {
+            // Show the "Hello" text when the button is clicked
+            helloText.style.display = 'block';
+        });
+    </script>
+
+
+
+
+
+      
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
       <script>
@@ -118,16 +233,12 @@
             $(document).ready(function () {
                 $("#connectBtn").click(function () {
                     var remoteIp = $("#rosMasterIpInput").val();
-                    // Add code here to perform the connection check
-                    // If connection successful, hide "Connect" button and show "Check Sensor Status" button
-                    // Show spinner during the connection check
                     $("#spinner").show();
-                    // Simulate a delay to mimic the connection check process
                     setTimeout(function () {
                         $("#spinner").hide();
                         $("#connectBtn").hide();
                         $("#checkSensorStatusBtn").show();
-                    }, 2000); // Change this value to the actual delay
+                    }, 2000); 
                 });
 
                 $("#checkSensorStatusBtn").click(function () {
@@ -189,90 +300,9 @@
             });
         });
     </script>
-      
+         
 
 
-      <!-- <form action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Logout</button>
-      </form> -->
-
-      <div class="container mt-4">
-        <button id="hideButton" class="btn btn-primary">Hide Content</button>
-        <div id="contentToHide">
-          <!-- Your existing page content goes here -->
-          <h1>Welcome to My Page</h1>
-          <body>
-            <div class="container mt-4">
-                <h1 class="mb-4">Actual Robot Report</h1>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>YEAR</th>
-                                <th>MONTH</th>
-                                <th>DAY</th>
-                                <th>HOUR</th>
-                                <th>MIN</th>
-                                <th>ROOM</th>
-                                <th>PERCENTAGE</th>
-                                <th>DURATION</th>
-                                <th>IMAGE</th>
-                                <th>DATE</th>
-                                <th>STATUS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in prefilled_data %}
-                            <tr>
-                                <td>{{ item.ID }}</td>
-                                <td>{{ item.YEAR }}</td>
-                                <td>{{ item.MONTH }}</td>
-                                <td>{{ item.DAY }}</td>
-                                <td>{{ item.HOUR }}</td>
-                                <td>{{ item.MIN }}</td>
-                                <td>{{ item.ROOM }}</td>
-                                <td>{{ item.PERCENTAGE }}</td>
-                                <td>{{ item.DURATION }}</td>
-                                <td>{{ item.IMAGE }}</td>
-                                <td>{{ item.DATE }}</td>
-                                <td>{{ item.STATUS }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    
-                </div>
-            </div>
-        </body>
-          <p>This is some sample content that you want to hide.</p>
-        </div>
-      </div>
-
-
-
-      <script>
-        // JavaScript to hide/show the content when the button is clicked
-        const hideButton = document.getElementById('hideButton');
-        const contentToHide = document.getElementById('contentToHide');
-      
-        hideButton.addEventListener('click', () => {
-          if (contentToHide.style.display === 'none') {
-            contentToHide.style.display = 'block';
-            hideButton.textContent = 'Hide Content';
-          } else {
-            contentToHide.style.display = 'none';
-            hideButton.textContent = 'Show Content';
-          }
-        });
-      </script>
-
-
-
-
-
-      
       <div class="container mt-4">
           <h2>System Health check:</h2>
 
@@ -304,6 +334,13 @@
             </div>
           </div>
       </div>
+
+
+
+      
+
+
+
       <!-- Add a section to display the room number entered by the user -->
       {% if room_number_entered %}
       <div class="col-md-12 mt-3">
@@ -311,53 +348,7 @@
       </div>
       {% endif %}
 
-      <!-- <div class="container mt-4">
-        <h2>Reports :</h2>
-
-        <p class="d-inline-flex gap-1">
-            
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#reportsTable" aria-expanded="false" aria-controls="collapseExample">
-              Reports
-            </button>
-          </p>
-          <div class="collapse" id="reportsTable">
-            <div class="card card-body">
-             The database table will be show here soon.....
-            </div>
-          </div>
-
-      </div> -->
-
-      <!-- Display the disinfection runs log in a table format -->
-      <!-- {% if runs %}
-      <div class="container mt-4">
-          <h2>Disinfection Runs Log</h2>
-          <table class="table">
-              <thead>
-                  <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Room Number</th>
-                      <th scope="col">Room Setup Number</th>
-                      <th scope="col">Run Count</th>
-                      <th scope="col">Master IP</th>
-                      <th scope="col">Created At</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {% for run in runs %}
-                  <tr>
-                      <th scope="row">{{ forloop.counter }}</th>
-                      <td>{{ run.room_number }}</td>
-                      <td>{{ run.room_setup }}</td>
-                      <td>{{ run.run_count }}</td>
-                      <td>{{ run.master_ip }}</td>
-                      <td>{{ run.created_at }}</td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
-      </div>
-      {% endif %} -->
+      
   </div>
   <div id="outputDiv" class="mt-4" style="display: none;"></div>
   <!-- Add Bootstrap JS -->
@@ -378,6 +369,7 @@
   
         // Add "http://" and ":11311" to the IP address
         var rosMasterUri = "http://" + rosMasterIpInput + ":11311";
+        // var rosMasterUri_raw = rosMasterIpInput ;
   
         // Make the AJAX request to submit the form
         var xhr = new XMLHttpRequest();

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <form method="post" action="{% url 'display_database' %}">
+        {% csrf_token %}
+        <label for="ros_master_ip">Enter ROS Master IP:</label>
+        <input type="text" id="ros_master_ip" name="ros_master_ip">
+        <button type="submit">Submit</button>
+    </form>
+    
+    <meta charset="UTF-8">
+    <title>Database Contents</title>
+    <!-- Add any additional CSS or styling here -->
+</head>
+<body>
+    <h1>Database Contents</h1>
+
+    <!-- Check if there is data to display -->
+    {% if data %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <!-- <th>YEAR</th>
+                    <th>MONTH</th>
+                    <th>DAY</th> -->
+                    <th>HOUR</th>
+                    <th>MIN</th>
+                    <th>ROOM_NO</th>
+                    <th>PERCENTAGE</th>
+                    <th>DURATION</th>
+                    <th>IMAGE</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ item.ID }}</td>
+                    <!-- <td>{{ item.YEAR }}</td>
+                    <td>{{ item.MONTH }}</td>
+                    <td>{{ item.DAY }}</td> -->
+                    <td>{{ item.HOUR }}</td>
+                    <td>{{ item.MIN }}</td>
+                    <td>{{ item.ROOM }}</td>
+                    <td>{{ item.PERCENTAGE }}</td>
+                    <td>{{ item.DURATION }}</td>
+                    <td>{{ item.IMAGE }}</td>
+                    <td>{{ item.DATE }}</td>
+                    <td>{{ item.STATUS }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No data available.</p>
+    {% endif %}
+
+    <!-- Add any additional HTML or formatting here -->
+</body>
+</html>
