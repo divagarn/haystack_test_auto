@@ -21,6 +21,7 @@ REMOTE_DB_PATH = "/haystack_disinfect_report/database/disinfect_status_report.db
 LOCAL_DB_PATH = "/tmp/disinfect_status_report.db"
 
 
+
 def check_sensor_status(request):
     if request.method == 'POST':
         remote_ip = request.POST.get('ros_master_ip', '')
@@ -48,7 +49,17 @@ def run_ros_node():
     rospy.init_node('disinfection_node', anonymous=True)
     rospy.spin()
 
+# # previous_mode = rospy.get_param('/haystack/mode', default='IDLE')
+# def mode_callback(param_name):
+#     # global previous_mode
+#     current_mode = rospy.get_param(param_name, default='IDLE')
 
+#     if previous_mode == "DISINFECT" and current_mode == "IDLE":
+#         rospy.sleep(duration=4.0)  
+#         print("Hello")
+
+#     # Update the previous mode
+#     previous_mode = current_mode
 
 def filter_and_save_data(ip, table_name):
     # Date filter
@@ -83,36 +94,8 @@ def filter_and_save_data(ip, table_name):
 
         # Store the filtered data and non-filtered data in separate lists
         filtered_data = [last_data_row] if last_data_row[10] == today_date else []
-    # today = datetime.date.today()
-    # today_date = today.strftime("%Y_%-m_%-d")
-
-    # columns, table_data = get_table_data(ip, table_name)
-
-    # filtered_data = []
-
-    # for row in table_data:
-    #     if row[10] == today_date:
-    #         filtered_data.append(row)
-
-    #         existing_row = FilteredData.objects.filter(id=row[0]).first()
-
-    #         if not existing_row:
-    #             filtered_row = FilteredData(
-    #                 id=row[0],
-    #                 year=row[1],
-    #                 month=row[2],
-    #                 day=row[3],
-    #                 hour=row[4],
-    #                 min=row[5],
-    #                 room=row[6],
-    #                 percentage=row[7],
-    #                 duration=row[8],
-    #                 image=row[9],
-    #                 date=row[10],
-    #                 status=row[11],
-    #             )
-    #             filtered_row.save()
-
+    
+# previous_mode = rospy.get_param('/haystack/mode', default='IDLE')
 def run_dis(request):
     ros_master_uri = request.POST.get('ros_master_uri', 'http://default-ros-master-uri:11311')
     os.environ['ROS_MASTER_URI'] = ros_master_uri
@@ -121,7 +104,9 @@ def run_dis(request):
     ip_pattern = r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b'
     ip_address = re.findall(ip_pattern, ros_master_uri)
     ip = ip_address[0]
-    # ip = request.POST.get('ip')
+    # previous_mode = rospy.get_param('/haystack/mode', default='IDLE')
+    # global previous_mode
+ 
 
     ros_thread = threading.Thread(target=run_ros_node)
     ros_thread.start()
@@ -138,13 +123,18 @@ def run_dis(request):
 
             run = 0
             while run < num_runs:
+                
                 mode = rospy.get_param('/haystack/mode', default='IDLE')
+
                 if mode == 'IDLE':
                     rospy.loginfo("Mode is IDLE. Waiting for 10 seconds...")
                     rospy.sleep(duration=10.0)
                     rospy.set_param('/disinfect_room_number', input_number)
+                    # rospy.set_param('/disinfect_status', "reset")
                     change_mode_to_disinfect()
                     rospy.loginfo("Mode changed to DISINFECT.")
+                    rospy.sleep(duration=10.0)
+                    
 
                     disinfection_run = DisinfectionRun(
                         room_number=input_number,
@@ -197,81 +187,34 @@ def run_dis(request):
                     filtered_data = [last_data_row] if last_data_row[10] == today_date else []
                     
 
-                    # today = datetime.date.today()
-                    # today_date = today.strftime("%Y_%-m_%-d")
-
-                    # table_name = "HAYSTACK_DISINFECT_REPORT" 
-                    # columns, table_data = get_table_data(ip, table_name)
-
-                    # filtered_data = []
-
-                    # for row in table_data:
-                    #     if row[10] == today_date:
-                    #         filtered_data.append(row)
-
-                    #         existing_row = FilteredData.objects.filter(id=row[0]).first()
-
-                    #         if not existing_row:
-                    #             filtered_row = FilteredData(
-                    #                 id=row[0],  
-                    #                 year=row[1],
-                    #                 month=row[2],
-                    #                 day=row[3],
-                    #                 hour=row[4],
-                    #                 min=row[5],
-                    #                 room=row[6],
-                    #                 percentage=row[7],
-                    #                 duration=row[8],
-                    #                 image=row[9],
-                    #                 date=row[10],
-                    #                 status=row[11],
-                    #                 # room_number=input_number,
-                    #             )
-                    #             filtered_row.save()
-
+                   
                 else:
                     rospy.loginfo("Mode is not IDLE. Waiting for 5 seconds...")
                     rospy.sleep(duration=5.0)
-
+            # if previous_mode == "DISINFECT" and mode == "IDLE":
+            #     print(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
+            #     rospy.sleep(duration=4.0)  
+            #     print("Hello")
+            # previous_mode = mode
             rospy.loginfo("All runs completed. Mode changed back to IDLE.")
             mode1 = rospy.get_param('/haystack/mode', default='IDLE')
-            if mode1 == 'IDLE':
-                rospy.sleep(duration=5.0)
-            # if run < num_runs:
-            #     today = datetime.date.today()
-            #     today_date = today.strftime("%Y_%-m_%-d")
+            while mode1 != 'IDLE':
+                rospy.sleep(duration=10.0)
+                mode1 = rospy.get_param('/haystack/mode', default='IDLE')
+            filter_and_save_data(ip, table_name)
+            # mode1 = rospy.get_param('/haystack/mode', default='IDLE')
+            # print("............................", mode1)
+            # if previous_mode == "DISINFECT" and mode1 == "IDLE":
+            #     print("changed>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-            #     table_name = "HAYSTACK_DISINFECT_REPORT" 
-            #     columns, table_data = get_table_data(ip, table_name)
-
-            #     filtered_data = []
-
-            #     for row in table_data:
-            #         if row[10] == today_date:
-            #             filtered_data.append(row)
-
-            #             existing_row = FilteredData.objects.filter(id=row[0]).first()
-
-            #             if not existing_row:
-            #                 filtered_row = FilteredData(
-            #                     id=row[0],  
-            #                     year=row[1],
-            #                     month=row[2],
-            #                     day=row[3],
-            #                     hour=row[4],
-            #                     min=row[5],
-            #                     room=row[6],
-            #                     percentage=row[7],
-            #                     duration=row[8],
-            #                     image=row[9],
-            #                     date=row[10],
-            #                     status=row[11],
-            #                     # room_number=input_number,
-            #                 )
-            #                 filtered_row.save()
+            # previous_mode = mode1
+            # print("prev", previous_mode, "curr", mode1)
+            # if mode1 == 'IDLE':
+            #     rospy.sleep(duration=5.0)
+           
             
-                filter_and_save_data(ip, table_name)
-                return HttpResponse("Last Run !!!.")
+            #     filter_and_save_data(ip, table_name)
+            return HttpResponse("Last Run !!!.")
 
         except Exception as e:
             return HttpResponse(f"Error: {e}")
@@ -280,61 +223,6 @@ def run_dis(request):
         return render(request, 'home.html', {'runs': previous_runs})
 
 
-# def run_dis(request):
-
-#     ros_master_uri = request.POST.get('ros_master_uri', 'http://default-ros-master-uri:11311')
-#     os.environ['ROS_MASTER_URI'] = ros_master_uri
-#     os.environ['ROS_IP'] = '172.16.2.66'
-
-#     ros_thread = threading.Thread(target=run_ros_node)
-#     ros_thread.start()
-#     input_number = int(request.POST.get('number', 0))
-    
-
-#     if request.method == 'POST':
-#         try:
-#             num_runs = int(request.POST.get('num_runs'))
-#             room_setup_number = int(request.POST.get('room_setup'))
-            
-
-#             if num_runs <= 0:
-#                 return HttpResponse("Error: Invalid number of runs.")
-            
-#             run = 0
-#             while run < num_runs:
-#                 mode = rospy.get_param('/haystack/mode', default='IDLE')
-#                 if mode == 'IDLE':
-#                     rospy.loginfo("Mode is IDLE. Waiting for 10 seconds...")
-#                     rospy.sleep(duration=10.0)
-#                     rospy.set_param('/disinfect_room_number', input_number)
-#                     change_mode_to_disinfect()
-#                     rospy.loginfo("Mode changed to DISINFECT.")
-
-#                     disinfection_run = DisinfectionRun(
-#                         room_number=input_number,
-#                         room_setup=room_setup_number,
-#                         run_count=run + 1,
-#                         master_ip=request.POST.get('ros_master_uri', ''),
-#                     )
-#                     disinfection_run.save()
-
-#                     run += 1
-#                     input_number += 1  
-
-#                 else:
-#                     rospy.loginfo("Mode is not IDLE. Waiting for 5 seconds...")
-#                     rospy.sleep(duration=5.0)
-            
-
-#             rospy.loginfo("All runs completed. Mode changed back to IDLE.")
-
-#             return HttpResponse("Runs started successfully.")
-
-#         except Exception as e:
-#             return HttpResponse(f"Error: {e}")
-#     else:
-#         previous_runs = DisinfectionRun.objects.all()
-#         return render(request, 'home.html', {'runs': previous_runs})
 
 
 

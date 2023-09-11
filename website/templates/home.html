@@ -19,6 +19,7 @@
 </head>
 <body>
   <div class="container mt-4">
+    <!-- <div id="formContainer"> -->
       <h1>Automated Regression Testing!</h1>
       <h2>Disinfection:</h2>
       <form action="{% url 'run_dis' %}" method="post">
@@ -27,13 +28,15 @@
               <div class="col-md-6">
                   <div class="mb-3">
                       <label for="rosMasterUriInput" class="form-label">Enter ROS Master IP:</label>
-                      <input type="text" class="form-control" id="rosMasterUriInput" value="172.16.2.167" name="ros_master_uri" required>
+                      <!-- <input type="text" class="form-control" id="rosMasterUriInput" value="172.16.2.167" name="ros_master_uri" required> -->
+                      <input type="text" class="form-control" id="rosMasterUriInput"  name="ros_master_uri" required>
                   </div>
               </div>
               <div class="col-md-6">
                   <div class="mb-3">
                       <label for="numRunsInput" class="form-label">Enter the number of runs:</label>
-                      <input type="number" class="form-control" id="numRunsInput" value="1" name="num_runs" required>
+                      <!-- <input type="number" class="form-control" id="numRunsInput" value="1" name="num_runs" required> -->
+                      <input type="number" class="form-control" id="numRunsInput" name="num_runs" required>
                   </div>
               </div>
               <div class="col-md-6">
@@ -179,7 +182,51 @@
               </div>
           </div>
       </form>
+    
 
+    <script>
+        document.getElementById("runDisButton").addEventListener("click", function (event) {
+            event.preventDefault();
+            var previousReportsButton = document.getElementById("previousReportsButton");
+            previousReportsButton.disabled = true; // Disable the button
+            // Rest of your code to submit the form and handle the response
+        });
+    </script>
+    
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const formContainer = document.getElementById("formContainer");
+          const outputDiv = document.getElementById("outputDiv");
+      
+          formContainer.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission
+      
+            // Serialize the form data
+            const formData = new FormData(this);
+      
+            // Make an AJAX request to submit the form
+            fetch(this.action, {
+              method: this.method,
+              headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+              },
+              body: formData
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                // Handle the response data here
+                outputDiv.innerHTML = "Script executed successfully! Output: " + data.result;
+                outputDiv.style.display = "block";
+              })
+              .catch((error) => {
+                outputDiv.innerHTML = "Error occurred.";
+                outputDiv.style.display = "block";
+              });
+          });
+        });
+      </script>
+      
 
 
       <script>
